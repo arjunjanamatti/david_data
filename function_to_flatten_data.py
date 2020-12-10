@@ -2,18 +2,20 @@ import xlrd
 import pandas as pd
 
 ### Year should be in form a matrix, even if a single value, please put it inside a matrix
-year = [2011, 2012]
+year = ['2011', '2012']
 ### filename should be with the path, if it is local file, no need of path
 ### IMPORTANT [FILE SHOULD BE IN xls format only], this script will not work with xlsx format
-filename_with_path = 'myb3-2015-ch.xls'
+# filename_with_path = 'myb3-2015-ch.xls'
+filename_with_path = 'C:\\Users\\Arjun Janamatti\\Downloads\\Bolivia_2015.xls'
+
 ### SHEET NAME, in some examples it was 'Table1' and in others it was 'Table 1', hence this variable
-sheet_name = 'Table1'
+sheet_name = 'Table 1'
 ### UNIT name default is mentioend as 'metric_tons'
 unit_name = 'metric_tons'
 ### THIS is the row number from where the original table starts, in china example the values start at 8, hence this value is 7
 row_number_start_data = 7
 ### Below is for filename
-country_name = 'China'
+country_name = 'Bolivia'
 ### In some instances the unit column number is 'B', and in some sheets this column was 'D', if the column is 'B', the value should be 1
 unit_column_number = 1
 
@@ -24,8 +26,10 @@ def get_dataframe(year, filename_with_path, sheet_name, unit_name, row_number_st
 
     sheet = book.sheet_by_name(sheet_name)
     num_rows = sheet.nrows
-    values_row = (sheet.row_values(5))[3:]
+    values_row = (sheet.row_values(row_number_start_data - 2))[unit_column_number + 2:]
     year_row_list = []
+    output_file_direc = [_ for _ in filename_with_path.split('\\')]
+    output_file_direc = ('/'.join(output_file_direc[:-1]))
 
     commdity_names  = []
 
@@ -146,14 +150,15 @@ def get_dataframe(year, filename_with_path, sheet_name, unit_name, row_number_st
         for j in year_row_list:
             temp_list.append(j[k])
         year_list_to_df.append(temp_list)
+    print('Length of year list: ', len(index_year_input))
 
-    print(len(year_list_to_df))
+    print('Length of year list: ', len(year_list_to_df))
     for index, m in enumerate(year):
         df[m] = pd.Series(year_list_to_df[index])
 
-    print(len(df))
+    # print(len(df))
     if len(year) > 1:
-        df.to_csv('{}{}-{}.csv'.format(country_name,
+        df.to_csv('{}'.format(output_file_direc)+'/'+'{}{}-{}.csv'.format(country_name,
                                       year[0],
                                       year[-1]))
     elif len(year) == 1:
